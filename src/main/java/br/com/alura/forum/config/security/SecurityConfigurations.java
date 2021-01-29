@@ -1,6 +1,7 @@
 package br.com.alura.forum.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,12 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     @Autowired
     private AutenticacaoService autenticacaoService;
 
+    @Override
+    @Bean
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
     //Configuracoes de Autenticacao
     @Override
     public void configure (AuthenticationManagerBuilder auth) throws  Exception{
@@ -32,7 +39,8 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/topicos").permitAll()
                 .antMatchers(HttpMethod.GET,"/topicos/*").permitAll()
-    //Configuração evita que uma URL que não foi configurada seja pública.
+                .antMatchers(HttpMethod.POST,"/auth").permitAll()
+                //Configuração evita que uma URL que não foi configurada seja pública.
                 .anyRequest().authenticated()
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
